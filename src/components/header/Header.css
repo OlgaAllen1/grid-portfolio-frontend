@@ -1,0 +1,47 @@
+.header {
+    padding: 50px 42px;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 178px;
+}
+.header h2 {
+    font-size: 24px;
+}
+
+.header h1 {
+    font-size: 36px;
+    color: white;
+    margin-top: 70px;
+}
+
+.header p {
+    margin-top: 15px;
+}
+
+.LinkedIn {
+    width: 110px;
+    height: 42px;
+    padding: 6px;
+    border-radius: var(--rounded-md);
+}
+.copy-email {
+    /*width: 110px;*/
+    height: 42px;
+    padding: 8px;
+    margin-left: 20px;
+    border-radius: var(--rounded-md);
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.copy-email img {
+    width: 24px;
+    height: 24px;
+}
+
+.header__buttons{
+    display: flex;
+    align-items: center;
+    margin-top: 28px;
+}

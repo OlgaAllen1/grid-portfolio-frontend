@@ -1,0 +1,131 @@
+.menu{
+    display: grid;
+    grid-template-columns: 64px 1fr;
+}
+.menu__links{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+}
+.menu__logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 64px;
+}
+
+.menu__logo.block {
+    border-radius: 50%;
+}
+
+.menu__links.block {
+    border-radius: var(--rounded-lg);
+}
+
+.menu__link button {
+    background-color: transparent;
+    color: #FFF;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+.menu__link button:hover {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.menu__link.active button {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.menu__links.menu__sandwich {
+    display: none;
+
+}
+
+.menu__floating {
+    position: fixed;
+    width: 50%;
+    height: 30%;
+    top: 120px;
+    gap: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    right: 20px;
+    opacity: 0;
+    transition: 0.5s;
+}
+
+.menu__floating.active {
+    opacity: 1;
+}
+
+.sandwich {
+    width: 24px;
+    height: 20px;
+    background-color: transparent;
+    position: relative;
+    top: -3px;
+}
+.sandwich span {
+    position: absolute;
+    width: 100%;
+    display: block;
+    height: 2px;
+    background-color: #FFF;
+    border-radius: 2px;
+}
+
+.sandwich span:nth-child(1) {
+    top: 0;
+    transition: 0.5s;
+}
+.sandwich span:nth-child(2) {
+    top: 50%;
+    transform: translateY(-50%);
+    transition: 0.5s;
+}
+
+.sandwich span:nth-child(3) {
+    bottom: 0;
+    transition: 0.5s;
+}
+
+.sandwich.active span:nth-child(1){
+    transform: rotate(45deg) translateY(0%);
+    top: 50%;
+}
+
+.sandwich.active span:nth-child(2){
+    opacity: 0;
+}
+
+.sandwich.active span:nth-child(3){
+    transform: rotate(-45deg) translateY(0%);
+    top: 50%;
+}
+
+
+/*
+Laptop: 1024px;
+Tablet: 768px ;
+Mobile: <768px;
+*/
+
+@media (max-width: 768px) {
+    .menu__links {
+        display: none;
+    }
+
+    .menu__links.menu__sandwich {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+    }
+
+
+}
