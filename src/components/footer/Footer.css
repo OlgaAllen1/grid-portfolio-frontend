@@ -1,0 +1,27 @@
+.footer {
+	margin: 1rem;
+	margin-top: 2rem;
+	min-height: 5rem;
+}
+
+.footer__content {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	align-items: center;
+	justify-items: end;
+}
+
+.footer__socials {
+	display: flex;
+	gap: 1rem;
+	justify-self: center;
+	/* justify-content: center; */
+}
+.footer__socials a {
+	color: var(--text-color);
+	font-weight: 600;
+	transition: 0.5s;
+}
+.footer__socials a:hover {
+	color: rgb(var(--primary-color));
+}

@@ -1,6 +1,12 @@
 .menu{
+    --sandwich-width: 2rem;
+    --sandwich-height: 1.5rem;
+    --logo-size: 4rem;
+    
     display: grid;
-    grid-template-columns: 64px 1fr;
+    grid-template-columns: var(--logo-size) 1fr;
+    margin: 1rem;
+    margin-top: 0;
 }
 .menu__links{
     display: flex;
@@ -12,7 +18,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 64px;
+    padding: 0.8rem;
+    height: var(--logo-size);
+    width: var(--logo-size);
 }
 
 .menu__logo.block {
@@ -26,17 +34,21 @@
 .menu__link button {
     background-color: transparent;
     color: #FFF;
-    font-size: 18px;
+    font-size: 1rem;
     text-transform: uppercase;
+    border: var(--main-border);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    transition: 0.25s;
+    border-color: transparent;
 }
 
 .menu__link button:hover {
-    color: var(--primary-color);
-    font-weight: bold;
+    border-color: rgb(var(--primary-color));
 }
 
 .menu__link.active button {
-    color: var(--primary-color);
+    color: rgb(var(--primary-color));
     font-weight: bold;
 }
 
@@ -47,16 +59,18 @@
 
 .menu__floating {
     position: fixed;
-    width: 50%;
-    height: 30%;
-    top: 120px;
-    gap: 20px;
+    width: 30%;
+    height: 25%;
+    top: 6.5rem;
+    gap: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    right: 20px;
+    right: 50%;
+    transform: translateX(-50%);
     opacity: 0;
+    z-index: 1000;
     transition: 0.5s;
 }
 
@@ -65,8 +79,8 @@
 }
 
 .sandwich {
-    width: 24px;
-    height: 20px;
+    width: var(--sandwich-width);
+    height: var(--sandwich-height);
     background-color: transparent;
     position: relative;
     top: -3px;
@@ -124,7 +138,7 @@ Mobile: <768px;
     .menu__links.menu__sandwich {
         display: flex;
         justify-content: space-between;
-        padding: 0 20px;
+        padding: 0 2rem;
     }
 
 
