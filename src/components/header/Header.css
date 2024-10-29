@@ -4,12 +4,12 @@
     --avatar-border: 1px solid #3F3E3E;
     --icon-size: 1.5rem;
 
-    padding: 3rem 2rem;
     display: grid;
     grid-template-columns: 1fr var(--avatar-size);
     align-items: center;
     margin: 1rem;
     margin-top: 2rem;
+    column-gap: 2rem;
     grid-template-areas:  
         "subtitle avatar"
         "title avatar"
@@ -83,20 +83,22 @@
     display: flex;
     align-items: center;
     margin-top: 2rem;
+    flex-wrap: wrap;
     gap: 1rem;
     grid-area: buttons;
 }
 .header__avatar {
     grid-area: avatar;
-}
-.header__avatar img {
     width: var(--avatar-size);
     height: var(--avatar-size);
     border-radius: 50%;
+}
+.header__avatar img {
     border: var(--avatar-border) ;
     background-color: var(--avatar-bg);
     padding: 1rem;
     object-fit: cover;
+    border-radius: 50%;
 }
 
 

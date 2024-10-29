@@ -1,13 +1,15 @@
-.experience {
-    padding: 2rem;
-}
-
 .experience__items {
+    --arrow-size: 2.5rem;
+
     margin-top: 2rem;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	display: grid;
+    grid-template-columns: var(--arrow-size) 1fr var(--arrow-size);
+    grid-template-areas: 
+    "buttonLeft slide buttonRight";
+    align-items: center;
 	gap: 1rem;
+    touch-action: none;
+    user-select: none;
 }
 
 .experience__item {
@@ -49,8 +51,8 @@
 }
 
 .experience__items button {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: var(--arrow-size);
+    height: var(--arrow-size);
     border-radius: 50%;
     background-color: rgb(var(--primary-color));
     color: white;
@@ -59,12 +61,21 @@
     font-size: 1.5rem;
     align-items: center;
 }
+.experience__items button:nth-child(1) {
+    grid-area: buttonLeft;
+}
+
 
 .experience__items-content {
 	min-height: 30rem;
 	position: relative;
 	flex-grow: 1;
 	overflow: hidden;
+    grid-area: slide;
+}
+
+.experience__items button:nth-child(3) {
+    grid-area: buttonRight;
 }
 
 .experience__item-wrapper {
@@ -78,4 +89,21 @@
 
 .experience__items button:disabled {
 	opacity: 0.5;
+}
+
+@media(max-width: 525px) {
+    .experience__items-content {
+        width: 100%;
+    }
+    .experience__item {
+        margin-left: 0;
+    }
+    .experience__items {
+        grid-template-columns: 1fr 1fr;
+        justify-items: center;
+        grid-template-areas: 
+        "slide slide"
+        "buttonLeft buttonRight"
+        ;
+    }
 }

@@ -54,12 +54,11 @@
 
 .menu__links.menu__sandwich {
     display: none;
-
 }
 
 .menu__floating {
     position: fixed;
-    width: 30%;
+    width: 15rem;
     height: 25%;
     top: 6.5rem;
     gap: 2rem;
@@ -67,15 +66,17 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    right: 50%;
+    right: -1rem;
     transform: translateX(-50%);
     opacity: 0;
+    visibility: hidden;
     z-index: 1000;
-    transition: 0.5s;
+    transition: opacity 0.5s;
 }
 
 .menu__floating.active {
     opacity: 1;
+    visibility: visible;
 }
 
 .sandwich {
@@ -138,8 +139,9 @@ Mobile: <768px;
     .menu__links.menu__sandwich {
         display: flex;
         justify-content: space-between;
-        padding: 0 2rem;
+        padding-block: 0;
     }
+
 
 
 }
