@@ -1,21 +1,20 @@
 import "./AdminPage.css";
-import noAvatar from "../../assets/user.png";
-import { BiPencil } from "react-icons/bi";
+import noimage from "../../assets/noimage.png";
+import { BiPencil, BiX } from "react-icons/bi";
 import { useState } from "react";
 import { useData } from "../../contexts/useData";
+import AdminNav from "../../components/nav/AdminNav";
+import AdminExperienceItem from "../../components/experience/AdminExperienceItem";
+import { ExperienceItem } from "../../components/experience/Experience";
 
 const AdminPage = () => {
-    const { mainData, updateMainData } = useData();
+    const { mainData, updateMainData, experienceItems, deleteExperienceItem } =
+        useData();
 
     const [selectedAvatar, setSelectedAvatar] = useState<File>();
-    const [avatar, setAvatar] = useState<string>(
-        mainData.avatar
-    );
+    const [avatar, setAvatar] = useState<string>(mainData.avatar);
 
     const [selectedLogo, setSelectedLogo] = useState<File>();
-    const [logo, setLogo] = useState<string>(
-        mainData.logo
-    );
 
     const [position, setPosition] = useState(mainData.position);
     const [description, setDescription] = useState(mainData.description);
@@ -38,21 +37,6 @@ const AdminPage = () => {
         }
     };
 
-    const handleLogoSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-
-        if (file) {
-            setSelectedLogo(file);
-            const reader = new FileReader();
-            reader.onload = () => {
-                if (reader.result) {
-                    setLogo(reader.result.toString());
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
     const saveMainData = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         updateMainData({
@@ -62,30 +46,16 @@ const AdminPage = () => {
             position,
             email,
             name,
-            description
-        })
+            description,
+        });
     };
 
     return (
         <main className="container admin">
-            <form action="">
-                <nav className="menu">
-                    <div className="menu__logo block">
-                        <img
-                            src={logo ? logo.toString() : noAvatar}
-                            alt="avatar"
-                        />
-                        <input
-                            type="file"
-                            id="logo"
-                            onChange={handleLogoSelect}
-                        />
-                        <label htmlFor="logo">
-                            <BiPencil />
-                        </label>
-                    </div>
-                </nav>
-            </form>
+            <AdminNav
+                onLogoChange={(file) => setSelectedLogo(file)}
+                mainDataLogo={mainData.logo}
+            />
             <form
                 className="block section"
                 encType="multipart/form-data"
@@ -137,7 +107,7 @@ const AdminPage = () => {
                     </div>
                     <div className="header__avatar">
                         <img
-                            src={avatar ? avatar.toString() : noAvatar}
+                            src={avatar ? avatar.toString() : noimage}
                             alt="avatar"
                         />
                         <input
@@ -152,6 +122,36 @@ const AdminPage = () => {
                 </header>
                 <button type="submit">Save</button>
             </form>
+
+            <div className="block section experience-items_admin">
+                <AdminExperienceItem
+                    company={{
+                        image: "",
+                        name: "",
+                    }}
+                    id=""
+                    description={[]}
+                    position=""
+                    endDate="12-01-2021"
+                    startDate="12-01-2020"
+                />
+                {experienceItems.map((experienceItem) => (
+                    <div
+                        className="experience-item_admin"
+                        key={experienceItem.id}
+                    >
+                        <button
+                            onClick={() => {
+                                deleteExperienceItem(experienceItem.id);
+                            }}
+                            className="experience-item__delete"
+                        >
+                            <BiX />
+                        </button>
+                        <ExperienceItem {...experienceItem} />
+                    </div>
+                ))}
+            </div>
         </main>
     );
 };

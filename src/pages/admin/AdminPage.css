@@ -75,3 +75,34 @@
 .admin .menu {
 	margin: 1rem 0;
 }
+
+.admin .section {
+	margin-bottom: 2rem;
+}
+
+.experience-items_admin {
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: 1rem;
+	gap: 1.5rem;
+}
+
+.experience-item_admin {
+	position: relative;
+}
+
+.experience-item_admin .experience-item__delete {
+	position: absolute;
+	width: 2.5rem;
+	height: 2.5rem;
+	min-width: fit-content;
+	border-radius: 50%;
+	font-size: 1.5rem;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: -0.5rem;
+	right: -0.5rem;
+
+}

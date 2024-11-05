@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 
 import MainPage from "./pages/main/MainPage";
 import AdminPage from "./pages/admin/AdminPage";
-import { MainData } from "./types";
 import { DataContextProvider } from "./contexts/DataContext";
 
 function App() {

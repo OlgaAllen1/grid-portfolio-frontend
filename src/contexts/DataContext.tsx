@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { MainData } from "../types";
+import { IExperienceData, MainData } from "../types";
 import axios from "axios";
 interface IUpdateData {
     selectedAvatar?: File;
@@ -10,9 +10,24 @@ interface IUpdateData {
     linkedIn: string;
     email: string;
 }
+
+interface IExperiencePostData {
+    company: {
+        image?: File;
+        name: string;
+    };
+    description: string[];
+    position: string;
+    startDate: string;
+    endDate: string;
+}
+
 interface IDataContext {
     mainData: MainData;
+    experienceItems: IExperienceData[];
     updateMainData: (data: IUpdateData) => Promise<void>;
+    createExperienceItem: (data: IExperiencePostData) => Promise<void>;
+    deleteExperienceItem: (id: string) => Promise<void>;
 }
 
 export const DataContext = createContext<IDataContext | undefined>(undefined);
@@ -33,15 +48,24 @@ export const DataContextProvider = ({
         name: "",
         position: "",
     });
+    const [experienceItems, setExperienceItems] = useState<IExperienceData[]>(
+        []
+    );
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
     const fetchMainData = async () => {
         try {
-			console.log("FETCHING....")
             const response = await axios.get(BASEURL + "/api/main");
             setMainData(response.data);
-            setLoading(false);
+        } catch (error) {
+            setError(true);
+        }
+    };
+    const fetchExperienceItems = async () => {
+        try {
+            const response = await axios.get(BASEURL + "/api/experiences");
+            setExperienceItems(response.data);
         } catch (error) {
             setError(true);
         }
@@ -72,25 +96,92 @@ export const DataContextProvider = ({
 
         try {
             setLoading(true);
-			console.log("PUTTING....")
-
-            await axios.put(BASEURL + "/api/main", formData, {
+            const response = await axios.put(BASEURL + "/api/main", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            await fetchMainData();
+            setMainData(response.data);
+            setLoading(false);
+        } catch (error) {
+            setError(true);
+        }
+    };
+
+    const createExperienceItem = async ({
+        company,
+        description,
+        endDate,
+        position,
+        startDate,
+    }: IExperiencePostData) => {
+        const formData = new FormData();
+        if (company.image) {
+            formData.append("file", company.image);
+        }
+        formData.append("description", JSON.stringify(description));
+        formData.append("endDate", endDate);
+        formData.append("position", position);
+        formData.append("startDate", startDate);
+        formData.append("companyName", company.name);
+
+        try {
+            setLoading(true);
+
+            const response = await axios.post(
+                BASEURL + "/api/experiences",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+
+            setExperienceItems([...experienceItems, response.data]);
+            setLoading(false);
+        } catch (error) {
+            setError(true);
+        }
+    };
+
+    const deleteExperienceItem = async (id: string) => {
+        try {
+            setLoading(true);
+            await axios.delete(
+                BASEURL + "/api/experiences/" + id
+            );
+
+            const i = experienceItems.findIndex(
+                (experienceItem) => experienceItem.id === id
+            );
+            setExperienceItems([
+                ...experienceItems.slice(0, i),
+                ...experienceItems.slice(i + 1),
+            ]);
+            setLoading(false);
         } catch (error) {
             setError(true);
         }
     };
 
     useEffect(() => {
-        fetchMainData();
+        const promises = [fetchMainData(), fetchExperienceItems()];
+        Promise.all(promises).then(() => {
+            setLoading(false);
+        });
     }, []);
 
     return (
-        <DataContext.Provider value={{ mainData, updateMainData }}>
+        <DataContext.Provider
+            value={{
+                mainData,
+                experienceItems,
+                deleteExperienceItem,
+                updateMainData,
+                createExperienceItem,
+            }}
+        >
             {loading && <p>Loading...</p>}
             {error && <p>Error :(</p>}
             {!loading && !error && children}
