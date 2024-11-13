@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 import GradientBlock from "../gradient-block/GradientBlock";
@@ -17,7 +16,7 @@ const socials = [
     },
 ];
 
-const Footer = ({ logo }) => {
+const Footer = ({ logo }: {logo: string}) => {
     return (
         <GradientBlock className="footer" position="bottom">
             <div className="footer__content">
@@ -42,7 +41,5 @@ const Footer = ({ logo }) => {
     );
 };
 
-Footer.propTypes = {
-    logo: PropTypes.string,
-};
+
 export default Footer;
