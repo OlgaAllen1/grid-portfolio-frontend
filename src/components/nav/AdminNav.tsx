@@ -28,10 +28,16 @@ const AdminNav = ({
     };
 
     return (
-        <nav className="menu">
+        <nav className="menu menu_admin">
+            <h3>Logo:</h3>
             <div className="menu__logo block">
                 <img src={logo ? logo : noimage} alt="avatar" />
-                <input type="file" id="logo" onChange={handleLogoSelect} />
+                <input
+                    className="form-field"
+                    type="file"
+                    id="logo"
+                    onChange={handleLogoSelect}
+                />
                 <label htmlFor="logo">
                     <BiPencil />
                 </label>

@@ -17,6 +17,10 @@
         "buttons avatar";
 }
 
+.header_admin {
+    margin: 0;
+}
+
 .header h1 {
     color: white;
     margin-top: 6rem;

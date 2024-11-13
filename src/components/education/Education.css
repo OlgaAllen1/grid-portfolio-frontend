@@ -19,3 +19,15 @@
     text-align: right;
     font-size: 1.1rem;
 }
+
+.education__item__subjects {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+
+
+.education__subjects {
+    margin: 1rem 0;
+}

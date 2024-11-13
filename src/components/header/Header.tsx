@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import "./Header.css";
 import { BiCopy, BiLogoLinkedinSquare, BiCheck } from "react-icons/bi";
 import noAvatar from '../../assets/user.png';
-import { MainData } from '../../types'
+import { IMainData } from '../../types'
 
-function Header({ avatar, email, description,  linkedIn, name, position}: MainData) {
+function Header({ avatar, email, description,  linkedIn, name, position}: IMainData) {
     const [copied, setCopied] = useState(false);
     const copyEmail = () => {
         setCopied(true);

@@ -63,6 +63,7 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     font-size: 1rem;
+	overflow-x: hidden;
 }
 
 h1 {
@@ -81,4 +82,132 @@ img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+input.form-field[type="file"] {
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+	height: 100%;
+	cursor: pointer;
+	opacity: 0;
+}
+
+input.form-field[type="file"] ~ label {
+	position: absolute;
+	bottom: 1rem;
+	right: 0rem;
+	transition: 0.3s;
+	font-size: 1rem;
+	cursor: pointer;
+	color: white;
+	width: 2rem;
+	height:2rem;
+	border-radius: 50%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgb(var(--primary-color));
+}
+input.form-field[type="file"] ~ label:hover {
+	opacity: 0.7;
+}
+textarea.form-field {
+	width: 100%;
+}
+.form-field {
+	background-color: black;
+	border: var(--main-border);
+	border-width: 1px;
+	padding: 1rem;
+	border-radius: 1rem;
+	color: white;
+}
+
+.form-field:focus {
+	border-color: white;
+}
+
+.form {
+	display: flex;
+    gap: 1rem;
+	flex-direction: column;
+}
+.form-button {
+	border: var(--main-border);
+	border-width: 1px;
+	padding: 1rem 2rem;
+	border-radius: 1rem;
+	background-color: rgb(var(--primary-color));
+	color: white;
+	align-items: center;
+    display: flex;
+    justify-content: center;
+	align-self: flex-end;
+	transition: 0.3s;
+}
+
+.form-button:hover {
+	opacity: 0.7;
+}
+.form-link {
+	background-color: transparent;
+	text-decoration: underline;
+	color: rgb(var(--primary-color));
+}
+
+.form-label {
+	margin-right: 1rem;
+}
+
+
+.item-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+	margin-top: 0.5rem;
+	padding: 0.5rem;
+	border-radius: 1rem;
+	background-color: black;
+}
+.item-list p {
+    flex-grow: 1;
+}
+
+.item-list button {
+    min-width: 2rem;
+    padding: 0;
+    height: 2rem;
+
+}
+.items_admin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.item_admin {
+    flex-grow: 1;
+    padding: 1rem;
+    position: relative;
+}
+
+.section__title {
+    margin-block: 1rem;
+}
+
+.items_admin .item__delete  {
+	position: absolute;
+    width: 2.5rem;
+    height: 2.5rem;
+    min-width: fit-content;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: -0.5rem;
+    right: -0.5rem;
 }

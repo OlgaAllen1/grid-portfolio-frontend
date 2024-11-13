@@ -24,9 +24,8 @@
 }
 
 .experience__item_admin {
-    max-width: 30rem;
+    width: 30rem;
     min-height: 30rem;
-    margin-left: 1rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -58,6 +57,7 @@
     justify-self: end;
     height: 4.75rem;
     border-radius: 1rem;
+    object-fit: cover;
     background: rgb(var(--primary-color));
     font-size: 0.75rem;
     display: flex;
@@ -116,21 +116,20 @@
     height: 100%;
 }
 
-#experience__item-logo ~ label {
-    right: 0;
-    width: 2rem;
-    font-size: 1rem;
-    height: 2rem;
-}
-.experience__item-description {
+
+.item-description {
     display: flex;
     gap: 1rem;
     align-items: center;
     justify-content: space-between;
 }
-.experience__item-description .experience__item-button {
+.item-description .item-button {
     align-self: center;
     min-width: 5rem;
+}
+
+.item-description input {
+    flex-grow: 1;
 }
 
 @media(max-width: 525px) {

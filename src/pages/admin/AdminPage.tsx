@@ -1,15 +1,38 @@
 import "./AdminPage.css";
 import noimage from "../../assets/noimage.png";
 import { BiPencil, BiX } from "react-icons/bi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useData } from "../../contexts/useData";
 import AdminNav from "../../components/nav/AdminNav";
 import AdminExperienceItem from "../../components/experience/AdminExperienceItem";
-import { ExperienceItem } from "../../components/experience/Experience";
+import { Link, useNavigate } from "react-router-dom";
+import AdminEducationListItem from "../../components/education/AdminEducationListItem";
 
 const AdminPage = () => {
-    const { mainData, updateMainData, experienceItems, deleteExperienceItem } =
-        useData();
+    const navigate = useNavigate();
+
+    const {
+        mainData,
+        aboutData,
+        admin,
+        educationItems,
+        experienceItems,
+        signOut,
+        updateMainData,
+        deleteExperienceItem,
+        createExperienceItem,
+        updateExperienceItem,
+        createEducationItem,
+        updateEducationItem,
+        deleteEducationItem,
+        createOrUpdateAboutData,
+    } = useData();
+
+    useEffect(() => {
+        if (!admin) {
+            navigate("/signin");
+        }
+    }, [admin]);
 
     const [selectedAvatar, setSelectedAvatar] = useState<File>();
     const [avatar, setAvatar] = useState<string>(mainData.avatar);
@@ -21,6 +44,7 @@ const AdminPage = () => {
     const [name, setName] = useState(mainData.name);
     const [linkedIn, setLinkedIn] = useState(mainData.linkedIn);
     const [email, setEmail] = useState(mainData.email);
+    const [about, setAbout] = useState(aboutData.about);
 
     const handleAvatarSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -50,108 +74,192 @@ const AdminPage = () => {
         });
     };
 
+    const saveAbout = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        createOrUpdateAboutData(about);
+    };
+
     return (
         <main className="container admin">
-            <AdminNav
-                onLogoChange={(file) => setSelectedLogo(file)}
-                mainDataLogo={mainData.logo}
-            />
-            <form
-                className="block section"
-                encType="multipart/form-data"
-                onSubmit={saveMainData}
-            >
-                <header className="header">
-                    <h2>
-                        <input
-                            type="text"
-                            placeholder="Your job position..."
-                            value={position}
-                            onChange={(event) =>
-                                setPosition(event.target.value)
-                            }
-                        />
-                    </h2>
-                    <h1>
-                        <input
-                            type="text"
-                            placeholder="Your name..."
-                            value={name}
-                            onChange={(event) => setName(event.target.value)}
-                        />
-                    </h1>
-                    <p>
-                        <textarea
-                            placeholder="Description..."
-                            value={description}
-                            onChange={(event) =>
-                                setDescription(event.target.value)
-                            }
-                        ></textarea>
-                    </p>
-                    <div className="header__buttons">
-                        <input
-                            type="text"
-                            placeholder="Your LinkedIn url..."
-                            value={linkedIn}
-                            onChange={(event) =>
-                                setLinkedIn(event.target.value)
-                            }
-                        />
-                        <input
-                            type="text"
-                            placeholder="Your email..."
-                            value={email}
-                            onChange={(event) => setEmail(event.target.value)}
-                        />
-                    </div>
-                    <div className="header__avatar">
-                        <img
-                            src={avatar ? avatar.toString() : noimage}
-                            alt="avatar"
-                        />
-                        <input
-                            type="file"
-                            id="avatar"
-                            onChange={handleAvatarSelect}
-                        />
-                        <label htmlFor="avatar">
-                            <BiPencil />
-                        </label>
-                    </div>
-                </header>
-                <button type="submit">Save</button>
-            </form>
+            <nav>
+                <ul className="menu_admin block section">
+                    <li className="menu__link">
+                        <Link to={"/"}>
+                            <button>View site</button>
+                        </Link>
+                    </li>
+                    <li className="menu__link">
+                        <button onClick={signOut}>Sign out</button>
+                    </li>
+                </ul>
+            </nav>
+            <section className="block section">
+                <h2>Main data</h2>
 
-            <div className="block section experience-items_admin">
-                <AdminExperienceItem
-                    company={{
-                        image: "",
-                        name: "",
-                    }}
-                    id=""
-                    description={[]}
-                    position=""
-                    endDate="12-01-2021"
-                    startDate="12-01-2020"
+                <AdminNav
+                    onLogoChange={(file) => setSelectedLogo(file)}
+                    mainDataLogo={mainData.logo}
                 />
-                {experienceItems.map((experienceItem) => (
-                    <div
-                        className="experience-item_admin"
-                        key={experienceItem.id}
-                    >
-                        <button
-                            onClick={() => {
-                                deleteExperienceItem(experienceItem.id);
-                            }}
-                            className="experience-item__delete"
+                <form
+                    className=" form"
+                    encType="multipart/form-data"
+                    onSubmit={saveMainData}
+                >
+                    <header className="header header_admin">
+                        <h2>
+                            <input
+                                className="form-field"
+                                type="text"
+                                placeholder="Your job position..."
+                                value={position}
+                                onChange={(event) =>
+                                    setPosition(event.target.value)
+                                }
+                            />
+                        </h2>
+                        <h1>
+                            <input
+                                className="form-field"
+                                type="text"
+                                placeholder="Your name..."
+                                value={name}
+                                onChange={(event) =>
+                                    setName(event.target.value)
+                                }
+                            />
+                        </h1>
+                        <p>
+                            <textarea
+                                className="form-field"
+                                placeholder="Description..."
+                                value={description}
+                                onChange={(event) =>
+                                    setDescription(event.target.value)
+                                }
+                            ></textarea>
+                        </p>
+                        <div className="header__buttons">
+                            <input
+                                className="form-field"
+                                type="text"
+                                placeholder="Your LinkedIn url..."
+                                value={linkedIn}
+                                onChange={(event) =>
+                                    setLinkedIn(event.target.value)
+                                }
+                            />
+                            <input
+                                className="form-field"
+                                type="text"
+                                placeholder="Your email..."
+                                value={email}
+                                onChange={(event) =>
+                                    setEmail(event.target.value)
+                                }
+                            />
+                        </div>
+                        <div className="header__avatar">
+                            <img
+                                src={avatar ? avatar.toString() : noimage}
+                                alt="avatar"
+                            />
+                            <input
+                                className="form-field"
+                                type="file"
+                                id="avatar"
+                                onChange={handleAvatarSelect}
+                            />
+                            <label htmlFor="avatar">
+                                <BiPencil />
+                            </label>
+                        </div>
+                    </header>
+                    <button className="form-button" type="submit">
+                        Save
+                    </button>
+                </form>
+            </section>
+
+            <section className="block section">
+                <h2 className="section__title">Education</h2>
+                <div className="items_admin">
+                    <AdminEducationListItem
+                        onSave={createEducationItem}
+                        place=""
+                        startDate=""
+                        status=""
+                        endDate=""
+                        id=""
+                    />
+
+                    {educationItems.map((item) => (
+                        <AdminEducationListItem
+                            {...item}
+                            key={item.id}
+                            onSave={updateEducationItem}
                         >
-                            <BiX />
-                        </button>
-                        <ExperienceItem {...experienceItem} />
-                    </div>
-                ))}
-            </div>
+                            <button
+                                onClick={() => {
+                                    deleteEducationItem(item.id);
+                                }}
+                                className="form-button item__delete"
+                            >
+                                <BiX />
+                            </button>
+                        </AdminEducationListItem>
+                    ))}
+                </div>
+            </section>
+
+            <section className="block section">
+                <h2 className="section__title">About</h2>
+                <form action="" className="form" onSubmit={saveAbout}>
+                    <textarea
+                        value={about}
+                        onChange={(event) => setAbout(event.target.value)}
+                        className="form-field"
+                        placeholder="About..."
+                    ></textarea>
+
+                    <button className="form-button">Save</button>
+                </form>
+            </section>
+
+            <section className="block section">
+                <h2 className="section__title">Experience</h2>
+                <div className="items_admin">
+                    <AdminExperienceItem
+                        companyLogo=""
+                        companyName=""
+                        id=""
+                        description={[]}
+                        position=""
+                        endDate="12-01-2021"
+                        startDate="12-01-2020"
+                        onSave={createExperienceItem}
+                    />
+                    {experienceItems.map((experienceItem) => (
+                        <AdminExperienceItem
+                            onSave={updateExperienceItem}
+                            key={experienceItem.id}
+                            {...experienceItem}
+                        >
+                            <button
+                                onClick={() => {
+                                    deleteExperienceItem(experienceItem.id);
+                                }}
+                                className="form-button item__delete"
+                            >
+                                <BiX />
+                            </button>
+                        </AdminExperienceItem>
+                    ))}
+                </div>
+            </section>
+
+            <section className="block section">
+                <h2>Skills</h2>
+            </section>
         </main>
     );
 };

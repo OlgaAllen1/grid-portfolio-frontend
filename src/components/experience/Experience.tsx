@@ -4,23 +4,16 @@ import { useDrag } from "@use-gesture/react";
 
 import { useState } from "react";
 import { useData } from "../../contexts/useData";
+import { IExperienceData } from "../../types";
 
 export const ExperienceItem = ({
-    company: { image, name: companyName },
+    companyLogo,
+    companyName,
     description,
     position,
-    startDate, 
-    endDate
-}: {
-    company: {
-        image: string;
-        name: string;
-    };
-    description: string[];
-    position: string;
-    startDate: string;
-    endDate: string;
-}) => {
+    startDate,
+    endDate,
+}: IExperienceData) => {
     return (
         <div className="experience__item block">
             <div className="experience__item-header">
@@ -30,7 +23,7 @@ export const ExperienceItem = ({
                     {startDate} - {endDate || "now"}
                 </p>
             </div>
-            <img src={image} alt={companyName} />
+            <img src={companyLogo} alt={companyName} />
             <ul className="experience__item-list">
                 {description.map((item, index) => (
                     <li key={index}>{item}</li>
@@ -40,9 +33,8 @@ export const ExperienceItem = ({
     );
 };
 
-
 const Experience = () => {
-    const {experienceItems} = useData();
+    const { experienceItems } = useData();
     const [offset, setOffset] = useState(0);
     const handleLeftClick = () => {
         if (offset > 0) {

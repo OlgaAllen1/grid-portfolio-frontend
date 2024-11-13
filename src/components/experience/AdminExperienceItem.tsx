@@ -1,17 +1,26 @@
 import { useRef, useState } from "react";
 import noimage from "../../assets/noimage.png";
-import { BiPencil, BiPlus } from "react-icons/bi";
+import { BiPencil, BiPlus, BiX } from "react-icons/bi";
 import { IExperienceData } from "../../types";
-import { useData } from "../../contexts/useData";
+import Calendar from "../calendar/Calendar";
+import { IExperiencePostData } from "../../contexts/DataContext";
+
+interface IAdminExperienceItemProps extends IExperienceData {
+    children?: React.ReactNode;
+    onSave: (data: IExperiencePostData) => void;
+}
 
 const AdminExperienceItem = ({
-    company: { image: currentImage, name: currentCompanyName },
+    companyName: currentCompanyName,
+    companyLogo: currentImage,
     description: currentDescription,
     position: currentPosition,
     startDate: currentStartDate,
     endDate: currentEndDate,
-}: IExperienceData) => {
-    const { createExperienceItem } = useData();
+    onSave,
+    children,
+    id,
+}: IAdminExperienceItemProps) => {
     const descriptionInputRef = useRef<HTMLInputElement>(null);
     const [companyName, setCompanyName] = useState(currentCompanyName);
     const [position, setPosition] = useState(currentPosition);
@@ -44,29 +53,34 @@ const AdminExperienceItem = ({
     };
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        createExperienceItem({
-            company: {
-                name: companyName,
-                image: currentFile,
-            },
+        onSave({
+            companyName,
+            companyLogo: currentFile,
             description,
             endDate,
             startDate,
             position,
+            id,
         });
     };
 
     return (
-        <form onSubmit={handleSubmit} className="experience__item_admin block">
+        <form
+            onSubmit={handleSubmit}
+            className="experience__item_admin item_admin block "
+        >
+            {children}
             <div className="experience__item-header_admin">
                 <div>
                     <input
+                        className="form-field"
                         type="text"
                         value={position}
                         onChange={(event) => setPosition(event.target.value)}
                         placeholder="Position..."
                     />
                     <input
+                        className="form-field"
                         type="text"
                         value={companyName}
                         onChange={(event) => setCompanyName(event.target.value)}
@@ -76,60 +90,62 @@ const AdminExperienceItem = ({
                 <div className="experience__item-logo">
                     <img src={image ? image : noimage} alt="avatar" />
                     <input
+                        className="form-field experience__item-file"
                         type="file"
-                        id="experience__item-logo"
+                        id={"experience__item-admin_logo" + id}
                         onChange={handleImageSelect}
                     />
-                    <label htmlFor="experience__item-logo">
+                    <label htmlFor={"experience__item-admin_logo" + id}>
                         <BiPencil />
                     </label>
                 </div>
             </div>
 
             <div>
-                <div>
-                    <label htmlFor="">Start date: </label>
-                    <input
-                        type="date"
-                        value={startDate}
-                        onChange={(event) => setStartDate(event.target.value)}
-                        placeholder="Position..."
-                    />
-                </div>
-                <div>
-                    <label htmlFor="">End date: </label>
-                    <input
-                        type="date"
-                        value={endDate}
-                        onChange={(event) => setEndDate(event.target.value)}
-                        placeholder="Company name..."
-                    />
-                </div>
+                <Calendar
+                    label="Start date:"
+                    defaultValue={startDate}
+                    onChange={(month, year) => setStartDate(year + "-" + month)}
+                />
+                <Calendar
+                    defaultValue={endDate}
+                    label="End date:"
+                    onChange={(month, year) => setEndDate(year + "-" + month)}
+                />
             </div>
 
-            <div className="experience__item-description">
+            <div className="item-description">
                 <input
+                    className="form-field"
                     ref={descriptionInputRef}
                     value={descriptionItem}
                     onChange={(event) => setDescriptionItem(event.target.value)}
                     type="text"
-                    placeholder="Description"
+                    placeholder="Description..."
                 />
                 <button
                     onClick={handleAddDescription}
-                    className="experience__item-button"
+                    className="form-button item-button"
                     type="button"
                 >
                     <BiPlus />
                 </button>
             </div>
-            <ul className="experience__item-list">
+            <ul className="item-list">
                 {description?.map((item, index) => (
-                    <li>{item}</li>
+                    <li key={index}>
+                        <p>{item}</p>
+                        <button onClick={() => {
+
+                            setDescription([...description.slice(0, index), ...description.slice(index+1)])
+                        }} className="form-button" type="button"><BiX/></button>
+                    </li>
                 ))}
             </ul>
 
-            <button type="submit">Save</button>
+            <button className="form-button" type="submit">
+                Save
+            </button>
         </form>
     );
 };

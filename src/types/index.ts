@@ -1,4 +1,4 @@
-export interface MainData {
+export interface IMainData {
     id: string;
     avatar: string;
     description: string;
@@ -9,14 +9,26 @@ export interface MainData {
     position: string;
 }
 
+export interface IAboutData {
+    id: string;
+    about: string;
+}
+
 export interface IExperienceData {
     id: string;
-    company: {
-        image: string;
-        name: string;
-    };
+    companyLogo: string;
+    companyName: string;
     description: string[];
     position: string;
     startDate: string;
-    endDate: string;
+    endDate?: string;
+}
+
+export interface IEducationData {
+    id: string;
+    status: string;
+    place: string;
+    subjects?: string[];
+    startDate: string;
+    endDate?: string;
 }
