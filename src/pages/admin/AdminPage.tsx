@@ -256,10 +256,6 @@ const AdminPage = () => {
                     ))}
                 </div>
             </section>
-
-            <section className="block section">
-                <h2>Skills</h2>
-            </section>
         </main>
     );
 };

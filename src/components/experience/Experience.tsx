@@ -2,7 +2,7 @@ import "./Experience.css";
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
 import { useDrag } from "@use-gesture/react";
 
-import { useState } from "react";
+import { ForwardedRef, forwardRef, useEffect, useState } from "react";
 import { useData } from "../../contexts/useData";
 import { IExperienceData } from "../../types";
 
@@ -33,9 +33,11 @@ export const ExperienceItem = ({
     );
 };
 
-const Experience = () => {
+const Experience = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     const { experienceItems } = useData();
     const [offset, setOffset] = useState(0);
+
+
     const handleLeftClick = () => {
         if (offset > 0) {
             setOffset((prev) => prev - 1);
@@ -57,7 +59,7 @@ const Experience = () => {
         }
     });
     return (
-        <section className="block experience section">
+        <section className="block experience section" ref={ref}>
             <h2>Experience</h2>
 
             <div className="experience__items">
@@ -88,6 +90,6 @@ const Experience = () => {
             </div>
         </section>
     );
-};
+});
 
 export default Experience;

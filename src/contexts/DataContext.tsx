@@ -6,8 +6,24 @@ import {
     IMainData,
 } from "../types";
 import axios, { AxiosError } from "axios";
-import { signInWithEmailAndPassword, UserCredential } from "firebase/auth";
+import {
+    browserLocalPersistence,
+    setPersistence,
+    signInWithEmailAndPassword,
+    User,
+} from "firebase/auth";
 import { auth } from "../firebase";
+import useAuthState from "../hooks";
+import { getAuthToken } from "../utils";
+import Loader from "../components/loader/Loader";
+import CustomError from "../components/custom-error/CustomError";
+
+interface IGeneralData {
+    main: IMainData;
+    about: IAboutData;
+    experiences: IExperienceData[];
+    education: IEducationData[];
+}
 
 interface IUpdateData {
     selectedAvatar?: File;
@@ -43,12 +59,12 @@ interface IDataContext {
     createOrUpdateAboutData: (about: string) => Promise<void>;
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
-    admin: UserCredential | null;
+    admin: User | null;
     educationItems: IEducationData[];
 }
 
 export const DataContext = createContext<IDataContext | undefined>(undefined);
-const BASEURL = "http://localhost:8000";
+const BASEURL = import.meta.env.VITE_BASE_URL;
 
 export const DataContextProvider = ({
     children,
@@ -75,17 +91,16 @@ export const DataContextProvider = ({
     const [educationItems, setEducationItems] = useState<IEducationData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const [admin, setAdmin] = useState<UserCredential | null>(null);
+    const admin = useAuthState();
 
     const signIn = async (email: string, password: string) => {
         try {
+            await setPersistence(auth, browserLocalPersistence);
             const userCredentials = await signInWithEmailAndPassword(
                 auth,
                 email,
                 password
             );
-
-            setAdmin(userCredentials);
         } catch (error) {
             throw error;
         }
@@ -94,7 +109,6 @@ export const DataContextProvider = ({
     const signOut = async () => {
         try {
             await auth.signOut();
-            setAdmin(null);
         } catch (error) {
             setError(true);
         }
@@ -131,28 +145,34 @@ export const DataContextProvider = ({
         linkedIn,
         email,
     }: IUpdateData) => {
-        const formData = new FormData();
-        if (selectedAvatar) {
-            formData.append("avatar", selectedAvatar);
-        }
-        if (selectedLogo) {
-            formData.append("logo", selectedLogo);
-        }
-        formData.append("id", mainData.id);
-        formData.append("position", position);
-        formData.append("description", description);
-        formData.append("name", name);
-        formData.append("linkedIn", linkedIn);
-        formData.append("email", email);
-
         try {
+            const token = await getAuthToken();
+            const formData = new FormData();
+            console.log(selectedLogo, selectedAvatar);
+            if (selectedAvatar) {
+                formData.append("avatar", selectedAvatar);
+            }
+            if (selectedLogo) {
+                formData.append("logo", selectedLogo);
+            }
+            formData.append("id", mainData.id);
+            formData.append("position", position);
+            formData.append("description", description);
+            formData.append("name", name);
+            formData.append("linkedIn", linkedIn);
+            formData.append("email", email);
+
             setLoading(true);
             const response = await axios.put(BASEURL + "/api/main", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`,
                 },
             });
-            setMainData(response.data);
+            setMainData((prev) => ({
+                ...prev,
+                ...response.data,
+            }));
             setLoading(false);
         } catch (error) {
             setError(true);
@@ -160,13 +180,14 @@ export const DataContextProvider = ({
     };
 
     const createOrUpdateAboutData = async (about: string) => {
-        const formData = new FormData();
-        formData.append("about", about);
-        if (aboutData.id) {
-            formData.append("id", aboutData.id);
-        }
-
         try {
+            const formData = new FormData();
+            formData.append("about", about);
+            if (aboutData.id) {
+                formData.append("id", aboutData.id);
+            }
+            const token = await getAuthToken();
+
             setLoading(true);
             const response = await axios.post(
                 BASEURL + "/api/about/",
@@ -174,6 +195,7 @@ export const DataContextProvider = ({
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
@@ -201,17 +223,18 @@ export const DataContextProvider = ({
         position,
         startDate,
     }: IExperiencePostData) => {
-        const formData = new FormData();
-        if (companyLogo) {
-            formData.append("file", companyLogo);
-        }
-        formData.append("description", JSON.stringify(description));
-        formData.append("endDate", endDate || "");
-        formData.append("position", position);
-        formData.append("startDate", startDate);
-        formData.append("companyName", companyName);
-
         try {
+            const formData = new FormData();
+            if (companyLogo) {
+                formData.append("file", companyLogo);
+            }
+            formData.append("description", JSON.stringify(description));
+            formData.append("endDate", endDate || "");
+            formData.append("position", position);
+            formData.append("startDate", startDate);
+            formData.append("companyName", companyName);
+            const token = await getAuthToken();
+
             setLoading(true);
 
             const response = await axios.post(
@@ -220,6 +243,7 @@ export const DataContextProvider = ({
                 {
                     headers: {
                         "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
@@ -241,18 +265,18 @@ export const DataContextProvider = ({
         startDate,
         id,
     }: IExperiencePostData) => {
-        const formData = new FormData();
-        if (companyLogo) {
-            formData.append("file", companyLogo);
-        }
-        formData.append("description", JSON.stringify(description));
-        formData.append("endDate", endDate || "");
-        formData.append("position", position);
-        formData.append("startDate", startDate);
-        formData.append("companyName", companyName);
-
         try {
             setLoading(true);
+            const formData = new FormData();
+            if (companyLogo) {
+                formData.append("file", companyLogo);
+            }
+            formData.append("description", JSON.stringify(description));
+            formData.append("endDate", endDate || "");
+            formData.append("position", position);
+            formData.append("startDate", startDate);
+            formData.append("companyName", companyName);
+            const token = await getAuthToken();
 
             const response = await axios.put(
                 BASEURL + "/api/experiences/" + id,
@@ -260,15 +284,20 @@ export const DataContextProvider = ({
                 {
                     headers: {
                         "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
+
             const i = experienceItems.findIndex(
                 (experienceItem) => experienceItem.id === id
             );
             setExperienceItems([
                 ...experienceItems.slice(0, i),
-                response.data,
+                {
+                    ...experienceItems[i],
+                    ...response.data,
+                },
                 ...experienceItems.slice(i + 1),
             ]);
             setLoading(false);
@@ -281,7 +310,13 @@ export const DataContextProvider = ({
     const deleteExperienceItem = async (id: string) => {
         try {
             setLoading(true);
-            await axios.delete(BASEURL + "/api/experiences/" + id);
+            const token = await getAuthToken();
+
+            await axios.delete(BASEURL + "/api/experiences/" + id, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
             const i = experienceItems.findIndex(
                 (experienceItem) => experienceItem.id === id
@@ -313,15 +348,15 @@ export const DataContextProvider = ({
         subjects,
         startDate,
     }: IEducationData) => {
-        const formData = new FormData();
-
-        formData.append("subjects", JSON.stringify(subjects));
-        formData.append("status", status);
-        formData.append("place", place);
-        formData.append("endDate", endDate || "");
-        formData.append("startDate", startDate);
         try {
+            const formData = new FormData();
+            formData.append("subjects", JSON.stringify(subjects));
+            formData.append("status", status);
+            formData.append("place", place);
+            formData.append("endDate", endDate || "");
+            formData.append("startDate", startDate);
             setLoading(true);
+            const token = await getAuthToken();
 
             const response = await axios.post(
                 BASEURL + "/api/education",
@@ -329,6 +364,7 @@ export const DataContextProvider = ({
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
@@ -349,23 +385,22 @@ export const DataContextProvider = ({
         subjects,
         startDate,
     }: IEducationData) => {
-        const formData = new FormData();
-
-        formData.append("subjects", JSON.stringify(subjects));
-        formData.append("status", status);
-        formData.append("place", place);
-        formData.append("endDate", endDate || "");
-        formData.append("startDate", startDate);
-
         try {
+            const formData = new FormData();
+            formData.append("subjects", JSON.stringify(subjects));
+            formData.append("status", status);
+            formData.append("place", place);
+            formData.append("endDate", endDate || "");
+            formData.append("startDate", startDate);
+            const token = await getAuthToken();
             setLoading(true);
-
             const response = await axios.put(
                 BASEURL + "/api/education/" + id,
                 formData,
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
@@ -384,9 +419,13 @@ export const DataContextProvider = ({
 
     const deleteEducationItem = async (id: string) => {
         try {
+            const token = await getAuthToken();
             setLoading(true);
-            await axios.delete(BASEURL + "/api/education/" + id);
-
+            await axios.delete(BASEURL + "/api/education/" + id, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             const i = educationItems.findIndex(
                 (experienceItem) => experienceItem.id === id
             );
@@ -401,15 +440,25 @@ export const DataContextProvider = ({
     };
 
     useEffect(() => {
-        const promises = [
-            fetchMainData(),
-            fetchExperienceItems(),
-            fetchEducationItems(),
-            fetchAboutData(),
-        ];
-        Promise.all(promises).then(() => {
-            setLoading(false);
-        });
+        const fetchGeneral = async () => {
+            try {
+                setLoading(true);
+                const { data }: { data: IGeneralData } = await axios.get(
+                    BASEURL + "/api/general"
+                );
+
+                setAboutData(data.about);
+                setMainData(data.main);
+                setExperienceItems(data.experiences);
+                setEducationItems(data.education);
+            } catch (error) {
+                setError(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchGeneral();
     }, []);
 
     return (
@@ -432,8 +481,8 @@ export const DataContextProvider = ({
                 signOut,
             }}
         >
-            {loading && <p>Loading...</p>}
-            {error && <p>Error :(</p>}
+            {loading &&  <Loader/>}
+            {error && <CustomError/>}
             {!loading && !error && children}
         </DataContext.Provider>
     );

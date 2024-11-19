@@ -1,5 +1,4 @@
 .footer {
-	margin: 1rem;
 	margin-top: 2rem;
 	min-height: 5rem;
 	--logo-size: 3rem;
@@ -36,7 +35,7 @@
 
 @media (max-width: 525px) {
 	.footer  {
-		min-height: 8rem;
+		min-height: 10rem;
 	}
 	.footer__logo {
 		justify-self: center;

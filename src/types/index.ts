@@ -32,3 +32,7 @@ export interface IEducationData {
     startDate: string;
     endDate?: string;
 }
+
+export type RefsMap = {
+    [key: string]: React.RefObject<HTMLElement>;
+};

@@ -14,7 +14,7 @@
 
 .experience__item {
     display: grid;
-    width: 30rem;
+    width: 100%;
     padding: 2rem;
     grid-template-columns: 2fr 1fr;
     gap: 1rem;
@@ -87,6 +87,7 @@
 	flex-grow: 1;
 	overflow: hidden;
     grid-area: slide;
+    touch-action: none;
 }
 
 .experience__items button:nth-child(3) {
@@ -100,6 +101,7 @@
 	justify-content: center;
 	align-items: center;
 	transition: 1s;
+    width: 30rem;
 }
 
 .experience__items button:disabled {
@@ -136,8 +138,14 @@
     .experience__items-content {
         width: 100%;
     }
+    .experience__item-wrapper {
+        width: 100%;
+    }
     .experience__item {
         margin-left: 0;
+    }
+    .experience__item_admin {
+        width: 100%;
     }
     .experience__items {
         grid-template-columns: 1fr 1fr;

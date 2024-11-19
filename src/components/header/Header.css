@@ -7,7 +7,6 @@
     display: grid;
     grid-template-columns: 1fr var(--avatar-size);
     align-items: center;
-    margin: 1rem;
     margin-top: 2rem;
     column-gap: 2rem;
     grid-template-areas:  

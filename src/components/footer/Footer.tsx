@@ -16,7 +16,7 @@ const socials = [
     },
 ];
 
-const Footer = ({ logo }: {logo: string}) => {
+const Footer = ({ logo }: { logo: string }) => {
     return (
         <GradientBlock className="footer" position="bottom">
             <div className="footer__content">
@@ -40,6 +40,5 @@ const Footer = ({ logo }: {logo: string}) => {
         </GradientBlock>
     );
 };
-
 
 export default Footer;

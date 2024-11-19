@@ -1,5 +1,4 @@
-import { useRef } from "react";
-import { FaReact, FaHtml5, FaCss3, FaJs, FaPython } from "react-icons/fa";
+import { RefObject, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -7,17 +6,25 @@ import Education from "../../components/education/Education";
 import About from "../../components/about/About";
 import Footer from "../../components/footer/Footer";
 import Experience from "../../components/experience/Experience";
-import { Scroller, ScrollerItem } from "../../components/scroller/Scroller";
 import Nav from "../../components/nav/Nav";
 import Header from "../../components/header/Header.js";
 import "./MainPage.css";
 import { useData } from "../../contexts/useData";
+import Skills from "../../components/skills/Skills";
+import { RefsMap } from "../../types";
 
 gsap.registerPlugin(useGSAP);
 
 const MainPage = () => {
     const { mainData } = useData();
     const container = useRef<HTMLDivElement>(null);
+    const refs: RefsMap = {
+        header: useRef<HTMLElement>(null),
+        education: useRef<HTMLElement>(null),
+        about: useRef<HTMLElement>(null),
+        experience: useRef<HTMLElement>(null),
+    };
+
 
     useGSAP(
         () => {
@@ -43,7 +50,7 @@ const MainPage = () => {
                 { opacity: 1, x: 0 }
             );
             const scrollerTween = gsap.fromTo(
-                ".scroller",
+                ".skills",
                 { opacity: 0, y: 100 },
                 { opacity: 1, y: 0 }
             );
@@ -70,29 +77,13 @@ const MainPage = () => {
 
     return (
         <div ref={container} className="container">
-            <Nav logo={mainData.logo} />
-            <Header {...mainData} />
+            <Nav logo={mainData.logo} refs={refs} />
+            <Header ref={refs.header} {...mainData} />
             <main className="main">
-                <Education />
-                <About />
-                <Experience />
-                <Scroller>
-                    <ScrollerItem>
-                        <FaReact />
-                    </ScrollerItem>
-                    <ScrollerItem>
-                        <FaHtml5 />
-                    </ScrollerItem>
-                    <ScrollerItem>
-                        <FaCss3 />
-                    </ScrollerItem>
-                    <ScrollerItem>
-                        <FaJs />
-                    </ScrollerItem>
-                    <ScrollerItem>
-                        <FaPython />
-                    </ScrollerItem>
-                </Scroller>
+                <Education ref={refs.education} />
+                <About ref={refs.about} />
+                <Experience ref={refs.experience} />
+                <Skills />
             </main>
             <Footer logo={mainData?.logo} />
         </div>

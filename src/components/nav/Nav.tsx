@@ -1,13 +1,43 @@
 import { useEffect, useRef, useState } from "react";
 import "./Nav.css";
 import PropTypes from "prop-types";
+import { RefsMap } from "../../types";
+import clsx from "clsx";
 
+const NavItem = ({
+    sectionName,
+    handleScrollTo,
+}: {
+    sectionName: string;
+    handleScrollTo: (sectionName: string) => void;
+}) => {
+    return (
+        <li className={clsx("menu__link")}>
+            <button onClick={() => handleScrollTo(sectionName.toLowerCase())}>
+                {sectionName}
+            </button>
+        </li>
+    );
+};
 
-function Nav({logo}: {logo: string}) {
+const Nav = ({ logo, refs }: { logo: string; refs: RefsMap }) => {
     const [opened, setOpened] = useState(false);
     const floatingMenuRef = useRef<HTMLUListElement | null>(null);
     const sandwichMenuRef = useRef<HTMLUListElement | null>(null);
-    const sandwichButtonRef = useRef<HTMLButtonElement | null>(null); 
+    const sandwichButtonRef = useRef<HTMLButtonElement | null>(null);
+
+    const handleScrollTo = (sectionName: string) => {
+        const element = refs[sectionName]?.current;
+        if (element) {
+            const offset = -50;
+            const elementPosition =
+                element.getBoundingClientRect().top + window.scrollY;
+            window.scrollTo({
+                top: elementPosition + offset,
+                behavior: "smooth",
+            });
+        }
+    };
 
     const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
@@ -15,7 +45,7 @@ function Nav({logo}: {logo: string}) {
             floatingMenuRef.current &&
             !floatingMenuRef.current.contains(target) &&
             sandwichButtonRef.current &&
-            !sandwichButtonRef.current.contains(target) 
+            !sandwichButtonRef.current.contains(target)
         ) {
             setOpened(false);
         }
@@ -24,14 +54,17 @@ function Nav({logo}: {logo: string}) {
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
 
-        const observer = new IntersectionObserver(([entry]) => {
-            if (!entry.isIntersecting) {
-                setOpened(false);
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry.isIntersecting) {
+                    setOpened(false);
+                }
+            },
+            {
+                root: null,
+                threshold: 0,
             }
-        }, {
-            root: null,
-            threshold: 0,
-        });
+        );
 
         if (sandwichMenuRef.current) {
             observer.observe(sandwichMenuRef.current);
@@ -52,31 +85,33 @@ function Nav({logo}: {logo: string}) {
                     <img src={logo} alt="logo" />
                 </div>
                 <ul className="menu__links block">
-                    <li className="menu__link">
-                        <button>About</button>
-                    </li>
-                    <li className="menu__link active">
-                        <button>Education</button>
-                    </li>
-                    <li className="menu__link">
-                        <button>Experience</button>
-                    </li>
-                    <li className="menu__link">
-                        <button>Portfolio</button>
-                    </li>
+                    <NavItem
+                        sectionName="About"
+                        handleScrollTo={handleScrollTo}
+                    />
+                    <NavItem
+                        sectionName="Education"
+                        handleScrollTo={handleScrollTo}
+                    />
+                    <NavItem
+                        sectionName="Experience"
+                        handleScrollTo={handleScrollTo}
+                    />
                 </ul>
                 <ul
                     className="menu__links block menu__sandwich section"
                     ref={sandwichMenuRef}
                 >
-                    <li className="menu__link">
-                        <button>About</button>
-                    </li>
+                    <NavItem
+                        sectionName="About"
+                        handleScrollTo={handleScrollTo}
+                    />
+
                     <li>
                         <button
-                            ref={sandwichButtonRef} 
+                            ref={sandwichButtonRef}
                             onClick={() => setOpened((old) => !old)}
-                            className={`sandwich ${opened && "active"}`}
+                            className={clsx("sandwich", opened && "active")}
                         >
                             <span></span>
                             <span></span>
@@ -90,20 +125,19 @@ function Nav({logo}: {logo: string}) {
                 ref={floatingMenuRef}
                 className={`menu__floating block ${opened && "active"}`}
             >
-                <li className="menu__link active">
-                    <button>Education</button>
-                </li>
-                <li className="menu__link">
-                    <button>Experience</button>
-                </li>
-                <li className="menu__link">
-                    <button>Portfolio</button>
-                </li>
+                <NavItem
+                    sectionName="Education"
+                    handleScrollTo={handleScrollTo}
+                />
+                <NavItem
+                    sectionName="Experience"
+                    handleScrollTo={handleScrollTo}
+                />
             </ul>
         </>
     );
-}
+};
 Nav.propTypes = {
-    logo: PropTypes.string
-}
+    logo: PropTypes.string,
+};
 export default Nav;
