@@ -24,13 +24,18 @@ export interface IExperienceData {
     endDate?: string;
 }
 
-export interface IEducationData {
-    id: string;
+export interface IEducation {
     status: string;
     place: string;
     subjects?: string[];
     startDate: string;
     endDate?: string;
+}
+
+export interface IEducationData extends IEducation {
+    image?: string;
+    id: string;
+
 }
 
 export type RefsMap = {

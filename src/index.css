@@ -57,7 +57,7 @@ a {
     border-radius: var(--rounded-md);
 }
 html {
-    font-size: 15px;
+    font-size: 14.5px;
 }
 
 body {
@@ -211,4 +211,10 @@ textarea.form-field {
     justify-content: center;
     top: -0.5rem;
     right: -0.5rem;
+}
+
+.admin__item-logo {
+    position: relative;
+    width: 7rem;
+    height: 7rem;
 }

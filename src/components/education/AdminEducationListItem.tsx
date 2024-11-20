@@ -1,11 +1,14 @@
 import { useRef, useState } from "react";
 import { IEducationData } from "../../types";
-import { BiPlus, BiX } from "react-icons/bi";
+import { BiPencil, BiPlus, BiX } from "react-icons/bi";
 import Calendar from "../calendar/Calendar";
+import noimage from "../../assets/noimage.png";
+import { IEducationPostData } from "../../contexts/DataContext";
+import toast from "react-hot-toast";
 
 interface IAdminEducationProps extends IEducationData {
     children?: React.ReactNode;
-    onSave: (data: IEducationData) => void;
+    onSave: (data: IEducationPostData, id: string) => Promise<void>;
 }
 const AdminEducationListItem = ({
     startDate: currentStartDate,
@@ -13,6 +16,7 @@ const AdminEducationListItem = ({
     subjects: currentSubjects,
     endDate: currentEndDate,
     status: currentStatus,
+    image: currentImage,
     id,
     children,
     onSave,
@@ -24,6 +28,23 @@ const AdminEducationListItem = ({
     const [subject, setSubject] = useState("");
     const [status, setStatus] = useState(currentStatus);
     const subjectInputRef = useRef<HTMLInputElement>(null);
+    const [image, setImage] = useState<string>(currentImage || "");
+    const [currentFile, setCurrentFile] = useState<File>();
+
+    const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                if (reader.result) {
+                    setImage(reader.result.toString());
+                }
+            };
+            setCurrentFile(file);
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleAddSubject = () => {
         if (subject.trim().length > 0) {
@@ -35,13 +56,18 @@ const AdminEducationListItem = ({
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        onSave({
-            id,
-            place,
-            startDate,
-            status,
-            endDate,
-            subjects,
+        onSave(
+            {
+                place,
+                startDate,
+                status,
+                endDate,
+                subjects,
+                image: currentFile,
+            },
+            id
+        ).catch((error) => {
+            toast.error(error.message);
         });
     };
 
@@ -49,6 +75,18 @@ const AdminEducationListItem = ({
         <form className="item_admin form block" onSubmit={handleSubmit}>
             {children}
             <div className="education__item__info">
+                <div className="admin__item-logo">
+                    <img src={image ? image : noimage} alt="avatar" />
+                    <input
+                        className="form-field"
+                        type="file"
+                        id={"education__item-admin_logo" + id}
+                        onChange={handleImageSelect}
+                    />
+                    <label htmlFor={"education__item-admin_logo" + id}>
+                        <BiPencil />
+                    </label>
+                </div>
                 <input
                     type="text"
                     className="form-field"

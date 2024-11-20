@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import {
     IAboutData,
+    IEducation,
     IEducationData,
     IExperienceData,
     IMainData,
@@ -45,6 +46,10 @@ export interface IExperiencePostData {
     id: string;
 }
 
+export interface IEducationPostData extends IEducation {
+    image?: File;
+}
+
 interface IDataContext {
     mainData: IMainData;
     aboutData: IAboutData;
@@ -53,9 +58,15 @@ interface IDataContext {
     createExperienceItem: (data: IExperiencePostData) => Promise<void>;
     deleteExperienceItem: (id: string) => Promise<void>;
     updateExperienceItem: (data: IExperiencePostData) => Promise<void>;
-    createEducationItem: (data: IEducationData) => Promise<void>;
+    createEducationItem: (
+        data: IEducationPostData,
+        id: string
+    ) => Promise<void>;
     deleteEducationItem: (id: string) => Promise<void>;
-    updateEducationItem: (data: IEducationData) => Promise<void>;
+    updateEducationItem: (
+        data: IEducationPostData,
+        id: string
+    ) => Promise<void>;
     createOrUpdateAboutData: (about: string) => Promise<void>;
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
@@ -340,14 +351,17 @@ export const DataContextProvider = ({
         }
     };
 
-    const createEducationItem = async ({
-        id,
-        place,
-        status,
-        endDate,
-        subjects,
-        startDate,
-    }: IEducationData) => {
+    const createEducationItem = async (
+        {
+            place,
+            status,
+            endDate,
+            subjects,
+            startDate,
+            image,
+        }: IEducationPostData,
+        id: string = ""
+    ) => {
         try {
             const formData = new FormData();
             formData.append("subjects", JSON.stringify(subjects));
@@ -355,39 +369,54 @@ export const DataContextProvider = ({
             formData.append("place", place);
             formData.append("endDate", endDate || "");
             formData.append("startDate", startDate);
+            if (image) {
+                formData.append("file", image);
+            }
+
             setLoading(true);
             const token = await getAuthToken();
-
             const response = await axios.post(
                 BASEURL + "/api/education",
                 formData,
                 {
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "multipart/form-data",
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-
             setEducationItems([...educationItems, response.data]);
-            setLoading(false);
         } catch (error) {
-            setError(true);
-            console.log(error);
+            if (error instanceof AxiosError) {
+                const status = error.status as number;
+                if (status < 500) {
+                    throw new Error(error.response?.data.message);
+                } else {
+                    setError(true);
+                }
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
-    const updateEducationItem = async ({
-        id,
-        place,
-        status,
-        endDate,
-        subjects,
-        startDate,
-    }: IEducationData) => {
+    const updateEducationItem = async (
+        {
+            place,
+            status,
+            endDate,
+            subjects,
+            startDate,
+            image,
+        }: IEducationPostData,
+        id: string
+    ) => {
         try {
             const formData = new FormData();
             formData.append("subjects", JSON.stringify(subjects));
+            if (image) {
+                formData.append("file", image);
+            }
             formData.append("status", status);
             formData.append("place", place);
             formData.append("endDate", endDate || "");
@@ -399,7 +428,7 @@ export const DataContextProvider = ({
                 formData,
                 {
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "multipart/form-data",
                         Authorization: `Bearer ${token}`,
                     },
                 }
@@ -407,13 +436,23 @@ export const DataContextProvider = ({
             const i = educationItems.findIndex((item) => item.id === id);
             setEducationItems([
                 ...educationItems.slice(0, i),
-                response.data,
+                {
+                    ...educationItems[i],
+                    ...response.data,
+                },
                 ...educationItems.slice(i + 1),
             ]);
-            setLoading(false);
         } catch (error) {
-            setError(true);
-            console.log(error);
+            if (error instanceof AxiosError) {
+                const status = error.status as number;
+                if (status < 500) {
+                    throw new Error(error.response?.data.message);
+                } else {
+                    setError(true);
+                }
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -481,9 +520,9 @@ export const DataContextProvider = ({
                 signOut,
             }}
         >
-            {loading &&  <Loader/>}
-            {error && <CustomError/>}
-            {!loading && !error && children}
+            {loading && <Loader />}
+            {error && <CustomError />}
+            {children}
         </DataContext.Provider>
     );
 };

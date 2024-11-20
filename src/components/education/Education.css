@@ -1,8 +1,9 @@
 .education__item {
     margin-top: 3rem;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
+    gap: 1rem;
 }
 .education__item__title {
     color: rgb(var(--primary-color));

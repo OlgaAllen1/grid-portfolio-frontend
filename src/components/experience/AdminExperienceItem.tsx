@@ -87,10 +87,10 @@ const AdminExperienceItem = ({
                         placeholder="Company name..."
                     />
                 </div>
-                <div className="experience__item-logo">
-                    <img src={image ? image : noimage} alt="avatar" />
+                <div className="admin__item-logo">
+                    <img src={image ? image : noimage} alt="Company Logo" />
                     <input
-                        className="form-field experience__item-file"
+                        className="form-field"
                         type="file"
                         id={"experience__item-admin_logo" + id}
                         onChange={handleImageSelect}

@@ -1,6 +1,7 @@
 import { ForwardedRef, forwardRef } from "react";
 import { useData } from "../../contexts/useData";
 import { IEducationData } from "../../types";
+import noimage from "../../assets/noimage.png";
 import "./Education.css";
 
 export const EducationListItem = ({
@@ -9,9 +10,11 @@ export const EducationListItem = ({
     place,
     startDate,
     endDate,
+    image,
 }: IEducationData) => {
     return (
         <li className="education__item">
+            <img src={image || noimage} alt={place} />
             <div className="education__item__info">
                 <h3 className="education__item__title">{status}</h3>
                 <p className="education__item__subtitle">{place}</p>

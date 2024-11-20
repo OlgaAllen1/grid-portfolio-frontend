@@ -7,6 +7,7 @@ import AdminNav from "../../components/nav/AdminNav";
 import AdminExperienceItem from "../../components/experience/AdminExperienceItem";
 import { Link, useNavigate } from "react-router-dom";
 import AdminEducationListItem from "../../components/education/AdminEducationListItem";
+import { Toaster } from "react-hot-toast";
 
 const AdminPage = () => {
     const navigate = useNavigate();
@@ -79,6 +80,7 @@ const AdminPage = () => {
         createOrUpdateAboutData(about);
     };
 
+    const now = new Date();
     return (
         <main className="container admin">
             <nav>
@@ -186,9 +188,9 @@ const AdminPage = () => {
                     <AdminEducationListItem
                         onSave={createEducationItem}
                         place=""
-                        startDate=""
+                        startDate={now.getFullYear() + "-" + now.getMonth() }
                         status=""
-                        endDate=""
+                        endDate={now.getFullYear() + "-" + now.getMonth() }
                         id=""
                     />
 
@@ -261,3 +263,10 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
+
+
+// TODO: 1. Logout admin on refresh 
+// TODO: 2. StartDate and EndDate (need to manage getting month name)
+// TODO: 3. Styles of error and loading 
+// TODO: 4. Invalid password or email should be a toast message
+// TODO: 5. Education / Experience sorting in ASC ordering related to the start date 

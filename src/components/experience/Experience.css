@@ -107,11 +107,7 @@
 .experience__items button:disabled {
 	opacity: 0.5;
 }
-.experience__item-logo {
-    position: relative;
-    width: 7rem;
-    height: 7rem;
-}
+
 
 .experience__item-logo img {
     width: 100%;
