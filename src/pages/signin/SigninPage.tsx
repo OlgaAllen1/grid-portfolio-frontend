@@ -7,16 +7,13 @@ const SigninPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(false);
-    const [loading, setLoading] = useState(false);
     const { signIn } = useData();
 
     const navigate = useNavigate();
     const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setLoading(true);
         try {
             await signIn(email, password);
-            setLoading(false);
             navigate("/admin");
         } catch (error) {
             setError(true);

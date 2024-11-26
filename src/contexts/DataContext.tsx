@@ -125,28 +125,6 @@ export const DataContextProvider = ({
         }
     };
 
-    const fetchMainData = async () => {
-        try {
-            const response = await axios.get(BASEURL + "/api/main");
-            setMainData(response.data);
-        } catch (error) {
-            setError(true);
-        }
-    };
-
-    const fetchAboutData = async () => {
-        try {
-            const response = await axios.get(BASEURL + "/api/about");
-            setAboutData(response.data);
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                if (error.status !== 404) {
-                    setError(true);
-                }
-            }
-        }
-    };
-
     const updateMainData = async ({
         selectedAvatar,
         selectedLogo,
@@ -213,15 +191,7 @@ export const DataContextProvider = ({
             setAboutData(response.data);
             setLoading(false);
         } catch (error) {
-            setError(true);
-        }
-    };
-
-    const fetchExperienceItems = async () => {
-        try {
-            const response = await axios.get(BASEURL + "/api/experiences");
-            setExperienceItems(response.data);
-        } catch (error) {
+            console.log(error); 
             setError(true);
         }
     };
@@ -262,8 +232,15 @@ export const DataContextProvider = ({
             setExperienceItems([...experienceItems, response.data]);
             setLoading(false);
         } catch (error) {
-            setError(true);
             console.log(error);
+            if (error instanceof AxiosError) {
+                const status = error.status as number;
+                if (status < 500) {
+                    throw new Error(error.response?.data.message);
+                } else {
+                    setError(true);
+                }
+            }
         }
     };
 
@@ -313,8 +290,15 @@ export const DataContextProvider = ({
             ]);
             setLoading(false);
         } catch (error) {
-            setError(true);
             console.log(error);
+            if (error instanceof AxiosError) {
+                const status = error.status as number;
+                if (status < 500) {
+                    throw new Error(error.response?.data.message);
+                } else {
+                    setError(true);
+                }
+            }
         }
     };
 
@@ -337,15 +321,6 @@ export const DataContextProvider = ({
                 ...experienceItems.slice(i + 1),
             ]);
             setLoading(false);
-        } catch (error) {
-            setError(true);
-        }
-    };
-
-    const fetchEducationItems = async () => {
-        try {
-            const response = await axios.get(BASEURL + "/api/education");
-            setEducationItems(response.data);
         } catch (error) {
             setError(true);
         }
@@ -387,6 +362,7 @@ export const DataContextProvider = ({
             );
             setEducationItems([...educationItems, response.data]);
         } catch (error) {
+            console.log(error);
             if (error instanceof AxiosError) {
                 const status = error.status as number;
                 if (status < 500) {
@@ -443,6 +419,7 @@ export const DataContextProvider = ({
                 ...educationItems.slice(i + 1),
             ]);
         } catch (error) {
+            console.log(error);
             if (error instanceof AxiosError) {
                 const status = error.status as number;
                 if (status < 500) {
@@ -522,7 +499,7 @@ export const DataContextProvider = ({
         >
             {loading && <Loader />}
             {error && <CustomError />}
-            {children}
+            {!loading && !error && children}
         </DataContext.Provider>
     );
 };

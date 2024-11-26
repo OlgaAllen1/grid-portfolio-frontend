@@ -4,10 +4,11 @@ import { BiPencil, BiPlus, BiX } from "react-icons/bi";
 import { IExperienceData } from "../../types";
 import Calendar from "../calendar/Calendar";
 import { IExperiencePostData } from "../../contexts/DataContext";
+import toast from "react-hot-toast";
 
 interface IAdminExperienceItemProps extends IExperienceData {
     children?: React.ReactNode;
-    onSave: (data: IExperiencePostData) => void;
+    onSave: (data: IExperiencePostData) => Promise<void>;
 }
 
 const AdminExperienceItem = ({
@@ -61,7 +62,21 @@ const AdminExperienceItem = ({
             startDate,
             position,
             id,
-        });
+        })
+            .then(() => {
+                if (!id) {
+                    setCompanyName("");
+                    setCurrentFile(undefined);
+                    setDescription([]);
+                    setImage("");
+                    setPosition("");
+                    setEndDate("");
+                    setStartDate("");
+                }
+            })
+            .catch((error) => {
+                toast.error(error.message);
+            });
     };
 
     return (
@@ -135,10 +150,18 @@ const AdminExperienceItem = ({
                 {description?.map((item, index) => (
                     <li key={index}>
                         <p>{item}</p>
-                        <button onClick={() => {
-
-                            setDescription([...description.slice(0, index), ...description.slice(index+1)])
-                        }} className="form-button" type="button"><BiX/></button>
+                        <button
+                            onClick={() => {
+                                setDescription([
+                                    ...description.slice(0, index),
+                                    ...description.slice(index + 1),
+                                ]);
+                            }}
+                            className="form-button"
+                            type="button"
+                        >
+                            <BiX />
+                        </button>
                     </li>
                 ))}
             </ul>

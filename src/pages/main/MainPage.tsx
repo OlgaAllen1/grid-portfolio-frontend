@@ -1,4 +1,4 @@
-import { RefObject, useRef, useState } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
@@ -24,7 +24,6 @@ const MainPage = () => {
         about: useRef<HTMLElement>(null),
         experience: useRef<HTMLElement>(null),
     };
-
 
     useGSAP(
         () => {

@@ -66,9 +66,21 @@ const AdminEducationListItem = ({
                 image: currentFile,
             },
             id
-        ).catch((error) => {
-            toast.error(error.message);
-        });
+        )
+            .then(() => {
+                if (!id) {
+                    setStartDate("");
+                    setEndDate("");
+                    setSubjects([]);
+                    setImage("");
+                    setCurrentFile(undefined);
+                    setStatus("");
+                    setPlace("");
+                }
+            })
+            .catch((error) => {
+                toast.error(error.message);
+            });
     };
 
     return (
@@ -143,12 +155,12 @@ const AdminEducationListItem = ({
                 <Calendar
                     label="Start date:"
                     defaultValue={startDate}
-                    onChange={(month, year) => setStartDate(year + "-" + month)}
+                    onChange={(month, year) => setStartDate(month + "-" + year)}
                 />
                 <Calendar
                     defaultValue={endDate}
                     label="End date:"
-                    onChange={(month, year) => setEndDate(year + "-" + month)}
+                    onChange={(month, year) => setEndDate(month + "-" + year)}
                 />
             </div>
             <button className="form-button" type="submit">

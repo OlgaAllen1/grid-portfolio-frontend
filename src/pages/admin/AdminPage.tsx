@@ -1,21 +1,17 @@
 import "./AdminPage.css";
 import noimage from "../../assets/noimage.png";
 import { BiPencil, BiX } from "react-icons/bi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useData } from "../../contexts/useData";
 import AdminNav from "../../components/nav/AdminNav";
 import AdminExperienceItem from "../../components/experience/AdminExperienceItem";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AdminEducationListItem from "../../components/education/AdminEducationListItem";
-import { Toaster } from "react-hot-toast";
 
 const AdminPage = () => {
-    const navigate = useNavigate();
-
     const {
         mainData,
         aboutData,
-        admin,
         educationItems,
         experienceItems,
         signOut,
@@ -29,11 +25,6 @@ const AdminPage = () => {
         createOrUpdateAboutData,
     } = useData();
 
-    useEffect(() => {
-        if (!admin) {
-            navigate("/signin");
-        }
-    }, [admin]);
 
     const [selectedAvatar, setSelectedAvatar] = useState<File>();
     const [avatar, setAvatar] = useState<string>(mainData.avatar);
@@ -80,7 +71,6 @@ const AdminPage = () => {
         createOrUpdateAboutData(about);
     };
 
-    const now = new Date();
     return (
         <main className="container admin">
             <nav>
@@ -188,9 +178,9 @@ const AdminPage = () => {
                     <AdminEducationListItem
                         onSave={createEducationItem}
                         place=""
-                        startDate={now.getFullYear() + "-" + now.getMonth() }
+                        startDate={""}
                         status=""
-                        endDate={now.getFullYear() + "-" + now.getMonth() }
+                        endDate={""}
                         id=""
                     />
 
@@ -201,6 +191,7 @@ const AdminPage = () => {
                             onSave={updateEducationItem}
                         >
                             <button
+                                type="button"
                                 onClick={() => {
                                     deleteEducationItem(item.id);
                                 }}
@@ -218,6 +209,7 @@ const AdminPage = () => {
                 <form action="" className="form" onSubmit={saveAbout}>
                     <textarea
                         value={about}
+                        rows={10}
                         onChange={(event) => setAbout(event.target.value)}
                         className="form-field"
                         placeholder="About..."
@@ -247,6 +239,7 @@ const AdminPage = () => {
                             {...experienceItem}
                         >
                             <button
+                                type="button"
                                 onClick={() => {
                                     deleteExperienceItem(experienceItem.id);
                                 }}
@@ -263,10 +256,3 @@ const AdminPage = () => {
 };
 
 export default AdminPage;
-
-
-// TODO: 1. Logout admin on refresh 
-// TODO: 2. StartDate and EndDate (need to manage getting month name)
-// TODO: 3. Styles of error and loading 
-// TODO: 4. Invalid password or email should be a toast message
-// TODO: 5. Education / Experience sorting in ASC ordering related to the start date 

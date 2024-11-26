@@ -14,6 +14,7 @@ const months = [
     "November",
     "December",
 ];
+const notSelected = ["not-selected", "not-selected"];
 
 const Calendar = ({
     label,
@@ -24,7 +25,9 @@ const Calendar = ({
     defaultValue?: string;
     onChange?: (month: string, year: string) => void;
 }) => {
-    const [defaultYear, defaultMonth] = defaultValue ? defaultValue.split("-") : "";
+    const [defaultMonth, defaultYear] = defaultValue?.trim()
+        ? defaultValue.split("-")
+        : notSelected;
     const [years, setYears] = useState<number[]>([]);
     const [selectedMonth, setSelectedMonth] = useState(defaultMonth);
     const [selectedYear, setSelectedYear] = useState(defaultYear);
@@ -43,6 +46,14 @@ const Calendar = ({
             onChange(selectedMonth, selectedYear);
         }
     }, [selectedMonth, selectedYear]);
+
+    useEffect(() => {
+        const [defaultMonth, defaultYear] = defaultValue?.trim()
+            ? defaultValue.split("-")
+            : notSelected;
+        setSelectedMonth(defaultMonth);
+        setSelectedYear(defaultYear);
+    }, [defaultValue]);
 
     const handleMonthChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setSelectedMonth(event.target.value);
@@ -63,9 +74,7 @@ const Calendar = ({
                         value={selectedMonth}
                         onChange={handleMonthChange}
                     >
-                        <option value="" disabled>
-                            Select Month
-                        </option>
+                        <option value="not-selected">Select Month</option>
                         {months.map((month, index) => (
                             <option key={index} value={month}>
                                 {month}
@@ -81,9 +90,7 @@ const Calendar = ({
                         value={selectedYear}
                         onChange={handleYearChange}
                     >
-                        <option value="" disabled>
-                            Select Year
-                        </option>
+                        <option value="not-selected">Select Year</option>
                         {years.map((year) => (
                             <option key={year} value={year}>
                                 {year}

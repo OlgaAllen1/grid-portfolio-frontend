@@ -1,6 +1,5 @@
 .experience__items {
     --arrow-size: 2.5rem;
-
     margin-top: 2rem;
 	display: grid;
     grid-template-columns: var(--arrow-size) 1fr var(--arrow-size);
