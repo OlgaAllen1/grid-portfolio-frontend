@@ -42,18 +42,23 @@ const Calendar = ({
     }, []);
 
     useEffect(() => {
-        if (onChange && selectedMonth && selectedYear) {
+        if (onChange && selectedMonth !== "not-selected" && selectedYear !== "not-selected") {
             onChange(selectedMonth, selectedYear);
         }
-    }, [selectedMonth, selectedYear]);
+    }, [selectedMonth, selectedYear, onChange]);
 
     useEffect(() => {
         const [defaultMonth, defaultYear] = defaultValue?.trim()
             ? defaultValue.split("-")
             : notSelected;
-        setSelectedMonth(defaultMonth);
-        setSelectedYear(defaultYear);
-    }, [defaultValue]);
+    
+        if (defaultMonth !== selectedMonth) {
+            setSelectedMonth(defaultMonth);
+        }
+        if (defaultYear !== selectedYear) {
+            setSelectedYear(defaultYear);
+        }
+    }, []);
 
     const handleMonthChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setSelectedMonth(event.target.value);

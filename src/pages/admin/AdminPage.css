@@ -47,13 +47,15 @@
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+    justify-content: space-between;
+
 }
 
 .item_admin {
     flex-grow: 1;
-    max-width: 30rem;
     padding: 1rem;
     position: relative;
+    max-width: calc(50% - 1rem);
 }
 
 .section__title {
