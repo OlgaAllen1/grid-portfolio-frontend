@@ -38,13 +38,23 @@ const AdminExperienceItem = ({
             const reader = new FileReader();
             reader.onload = () => {
                 if (reader.result) {
-                    setImage(reader.result.toString());
+                    const imageUrl = reader.result.toString();
+                    setImage(imageUrl);
+                    updateFavicon(imageUrl); 
                 }
             };
             setCurrentFile(file);
             reader.readAsDataURL(file);
         }
     };
+
+    const updateFavicon = (imageUrl: string) => {
+        const favicon = document.getElementById("favicon") as HTMLLinkElement;
+        if (favicon) {
+            favicon.href = imageUrl;
+        }
+    };
+
     const handleAddDescription = () => {
         if (descriptionItem.trim().length > 0) {
             setDescription([...description, descriptionItem]);
@@ -70,8 +80,14 @@ const AdminExperienceItem = ({
                     setDescription([]);
                     setImage("");
                     setPosition("");
-                    setEndDate("");
-                    setStartDate("");
+                    setEndDate({
+                        month: "",
+                        year: "",
+                    });
+                    setStartDate({
+                        month: "",
+                        year: "",
+                    });
                 }
             })
             .catch((error) => {
@@ -120,12 +136,22 @@ const AdminExperienceItem = ({
                 <Calendar
                     label="Start date:"
                     defaultValue={startDate}
-                    onChange={(month, year) => setStartDate(year + "-" + month)}
+                    onChange={(month, year) =>
+                        setStartDate({
+                            month,
+                            year,
+                        })
+                    }
                 />
                 <Calendar
                     defaultValue={endDate}
                     label="End date:"
-                    onChange={(month, year) => setEndDate(year + "-" + month)}
+                    onChange={(month, year) =>
+                        setEndDate({
+                            month,
+                            year,
+                        })
+                    }
                 />
             </div>
 

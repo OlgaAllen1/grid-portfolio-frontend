@@ -8,6 +8,10 @@ export interface IMainData {
     name: string;
     position: string;
 }
+export type DateType = {
+    month: string;
+    year: string;
+}
 
 export interface IAboutData {
     id: string;
@@ -20,16 +24,16 @@ export interface IExperienceData {
     companyName: string;
     description: string[];
     position: string;
-    startDate: string;
-    endDate?: string;
+    startDate: DateType;
+    endDate?: DateType;
 }
 
 export interface IEducation {
     status: string;
     place: string;
     subjects?: string[];
-    startDate: string;
-    endDate?: string;
+    startDate: DateType;
+    endDate?: DateType;
 }
 
 export interface IEducationData extends IEducation {

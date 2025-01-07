@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import {
+    DateType,
     IAboutData,
     IEducation,
     IEducationData,
@@ -14,19 +15,18 @@ import {
     User,
 } from "firebase/auth";
 import { auth } from "../firebase";
-import useAuthState from "../hooks";
 import { getAuthToken } from "../utils";
 import Loader from "../components/loader/Loader";
 import CustomError from "../components/custom-error/CustomError";
 
-interface IGeneralData {
+interface IMainGeneralData {
     main: IMainData;
     about: IAboutData;
     experiences: IExperienceData[];
     education: IEducationData[];
 }
 
-interface IUpdateData {
+interface IMainUpdateData {
     selectedAvatar?: File;
     selectedLogo?: File;
     position: string;
@@ -41,8 +41,8 @@ export interface IExperiencePostData {
     companyName: string;
     description: string[];
     position: string;
-    startDate: string;
-    endDate?: string;
+    startDate: DateType;
+    endDate?: DateType;
     id: string;
 }
 
@@ -54,7 +54,7 @@ interface IDataContext {
     mainData: IMainData;
     aboutData: IAboutData;
     experienceItems: IExperienceData[];
-    updateMainData: (data: IUpdateData) => Promise<void>;
+    updateMainData: (data: IMainUpdateData) => Promise<void>;
     createExperienceItem: (data: IExperiencePostData) => Promise<void>;
     deleteExperienceItem: (id: string) => Promise<void>;
     updateExperienceItem: (data: IExperiencePostData) => Promise<void>;
@@ -70,7 +70,6 @@ interface IDataContext {
     createOrUpdateAboutData: (about: string) => Promise<void>;
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
-    admin: User | null;
     educationItems: IEducationData[];
 }
 
@@ -102,7 +101,6 @@ export const DataContextProvider = ({
     const [educationItems, setEducationItems] = useState<IEducationData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const admin = useAuthState();
 
     const signIn = async (email: string, password: string) => {
         try {
@@ -133,7 +131,7 @@ export const DataContextProvider = ({
         name,
         linkedIn,
         email,
-    }: IUpdateData) => {
+    }: IMainUpdateData) => {
         try {
             const token = await getAuthToken();
             const formData = new FormData();
@@ -210,9 +208,9 @@ export const DataContextProvider = ({
                 formData.append("file", companyLogo);
             }
             formData.append("description", JSON.stringify(description));
-            formData.append("endDate", endDate || "");
+            formData.append("endDate", JSON.stringify(endDate) );
             formData.append("position", position);
-            formData.append("startDate", startDate);
+            formData.append("startDate", JSON.stringify(startDate));
             formData.append("companyName", companyName);
             const token = await getAuthToken();
 
@@ -260,9 +258,9 @@ export const DataContextProvider = ({
                 formData.append("file", companyLogo);
             }
             formData.append("description", JSON.stringify(description));
-            formData.append("endDate", endDate || "");
+            formData.append("endDate", JSON.stringify(endDate));
             formData.append("position", position);
-            formData.append("startDate", startDate);
+            formData.append("startDate", JSON.stringify(startDate));
             formData.append("companyName", companyName);
             const token = await getAuthToken();
 
@@ -342,8 +340,8 @@ export const DataContextProvider = ({
             formData.append("subjects", JSON.stringify(subjects));
             formData.append("status", status);
             formData.append("place", place);
-            formData.append("endDate", endDate || "");
-            formData.append("startDate", startDate);
+            formData.append("endDate", JSON.stringify(endDate));
+            formData.append("startDate", JSON.stringify(startDate));
             if (image) {
                 formData.append("file", image);
             }
@@ -395,8 +393,8 @@ export const DataContextProvider = ({
             }
             formData.append("status", status);
             formData.append("place", place);
-            formData.append("endDate", endDate || "");
-            formData.append("startDate", startDate);
+            formData.append("endDate", JSON.stringify(endDate));
+            formData.append("startDate", JSON.stringify(startDate));
             const token = await getAuthToken();
             setLoading(true);
             const response = await axios.put(
@@ -459,7 +457,7 @@ export const DataContextProvider = ({
         const fetchGeneral = async () => {
             try {
                 setLoading(true);
-                const { data }: { data: IGeneralData } = await axios.get(
+                const { data }: { data: IMainGeneralData } = await axios.get(
                     BASEURL + "/api/general"
                 );
 
@@ -483,7 +481,6 @@ export const DataContextProvider = ({
                 aboutData,
                 mainData,
                 experienceItems,
-                admin,
                 educationItems,
                 deleteExperienceItem,
                 updateMainData,

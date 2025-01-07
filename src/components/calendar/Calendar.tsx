@@ -1,5 +1,6 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import "./Calendar.css";
+import { DateType } from "../../types";
 const months = [
     "January",
     "February",
@@ -14,7 +15,10 @@ const months = [
     "November",
     "December",
 ];
-const notSelected = ["not-selected", "not-selected"];
+const notSelected = {
+    month: "",
+    year: "",
+};
 
 const Calendar = ({
     label,
@@ -22,11 +26,11 @@ const Calendar = ({
     defaultValue,
 }: {
     label: string;
-    defaultValue?: string;
+    defaultValue?: DateType;
     onChange?: (month: string, year: string) => void;
 }) => {
-    const [defaultMonth, defaultYear] = defaultValue?.trim()
-        ? defaultValue.split("-")
+    const { month: defaultMonth, year: defaultYear } = defaultValue
+        ? defaultValue
         : notSelected;
     const [years, setYears] = useState<number[]>([]);
     const [selectedMonth, setSelectedMonth] = useState(defaultMonth);
@@ -42,16 +46,20 @@ const Calendar = ({
     }, []);
 
     useEffect(() => {
-        if (onChange && selectedMonth !== "not-selected" && selectedYear !== "not-selected") {
+        if (
+            onChange &&
+            selectedMonth !== "not-selected" &&
+            selectedYear !== "not-selected"
+        ) {
             onChange(selectedMonth, selectedYear);
         }
-    }, [selectedMonth, selectedYear, onChange]);
+    }, [selectedMonth, selectedYear]);
 
     useEffect(() => {
-        const [defaultMonth, defaultYear] = defaultValue?.trim()
-            ? defaultValue.split("-")
-            : notSelected;
-    
+        const { month: defaultMonth, year: defaultYear } = defaultValue
+        ? defaultValue
+        : notSelected;
+        
         if (defaultMonth !== selectedMonth) {
             setSelectedMonth(defaultMonth);
         }

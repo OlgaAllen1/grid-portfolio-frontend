@@ -7,6 +7,7 @@ import AdminNav from "../../components/nav/AdminNav";
 import AdminExperienceItem from "../../components/experience/AdminExperienceItem";
 import { Link } from "react-router-dom";
 import AdminEducationListItem from "../../components/education/AdminEducationListItem";
+import useAuthState from "../../hooks";
 
 const AdminPage = () => {
     const {
@@ -25,6 +26,7 @@ const AdminPage = () => {
         createOrUpdateAboutData,
     } = useData();
 
+    const admin = useAuthState();
 
     const [selectedAvatar, setSelectedAvatar] = useState<File>();
     const [avatar, setAvatar] = useState<string>(mainData.avatar);
@@ -178,9 +180,15 @@ const AdminPage = () => {
                     <AdminEducationListItem
                         onSave={createEducationItem}
                         place=""
-                        startDate={""}
+                        startDate={{
+                            month: "",
+                            year: "",
+                        }}
                         status=""
-                        endDate={""}
+                        endDate={{
+                            month: "",
+                            year: "",
+                        }}
                         id=""
                     />
 
@@ -228,8 +236,14 @@ const AdminPage = () => {
                         id=""
                         description={[]}
                         position=""
-                        endDate="12-01-2021"
-                        startDate="12-01-2020"
+                        endDate={{
+                            month: "",
+                            year: "",
+                        }}
+                        startDate={{
+                            month: "",
+                            year: "",
+                        }}
                         onSave={createExperienceItem}
                     />
                     {experienceItems.map((experienceItem) => (

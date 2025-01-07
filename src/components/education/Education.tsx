@@ -23,7 +23,10 @@ export const EducationListItem = ({
                 </p>
             </div>
             <p className="education__item__date">
-                {startDate === "not-selected" ? "" : startDate }<br/>{endDate === "not-selected" ? "" : endDate }
+                {startDate.month} {startDate.year} <br />
+                {endDate?.month || endDate?.year 
+                    ? endDate.month + " " + endDate.year
+                    : ""}
             </p>
         </li>
     );

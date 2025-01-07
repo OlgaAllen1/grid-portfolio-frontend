@@ -69,8 +69,14 @@ const AdminEducationListItem = ({
         )
             .then(() => {
                 if (!id) {
-                    setStartDate("");
-                    setEndDate("");
+                    setStartDate({
+                        month: "",
+                        year: ""
+                    });
+                    setEndDate({
+                        month: "",
+                        year: ""
+                    });
                     setSubjects([]);
                     setImage("");
                     setCurrentFile(undefined);
@@ -155,12 +161,18 @@ const AdminEducationListItem = ({
                 <Calendar
                     label="Start date:"
                     defaultValue={startDate}
-                    onChange={(month, year) => setStartDate(month + "-" + year)}
+                    onChange={(month, year) => setStartDate({
+                        month,
+                        year
+                    })}
                 />
                 <Calendar
                     defaultValue={endDate}
                     label="End date:"
-                    onChange={(month, year) => setEndDate(month + "-" + year)}
+                    onChange={(month, year) => setEndDate({
+                        month,
+                        year
+                    })}
                 />
             </div>
             <button className="form-button" type="submit">

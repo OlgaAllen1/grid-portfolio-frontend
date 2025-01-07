@@ -19,8 +19,9 @@ export const ExperienceItem = ({
             <div className="experience__item-header">
                 <h2>{position}</h2>
                 <h3>{companyName}</h3>
-                <p>
-                    {startDate} - {endDate || "now"}
+                <p className="experience__item-date">
+                    {startDate.month} {startDate.year} -{" "}
+                    {endDate ? endDate.month + " " + endDate.year : "now"}
                 </p>
             </div>
             <img src={companyLogo} alt={companyName} />
@@ -36,15 +37,33 @@ export const ExperienceItem = ({
 const Experience = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
     const { experienceItems } = useData();
     const [offset, setOffset] = useState(0);
+    const [slidesPerView, setSlidesPerView] = useState(1); // Default to 1 slide for small screens
 
+    // Calculate slides per view based on screen size
+    useEffect(() => {
+        const updateSlidesPerView = () => {
+            setSlidesPerView(window.innerWidth > 768 ? 2 : 1); // 2 slides for large screens, 1 for small
+        };
+
+        updateSlidesPerView(); // Initial check
+        window.addEventListener("resize", updateSlidesPerView); // Update on resize
+
+        return () => {
+            window.removeEventListener("resize", updateSlidesPerView);
+        };
+    }, []);
+
+    // Calculate the maximum offset
+    const maxOffset = Math.max(0, experienceItems.length - slidesPerView);
 
     const handleLeftClick = () => {
         if (offset > 0) {
             setOffset((prev) => prev - 1);
         }
     };
+
     const handleRightClick = () => {
-        if (offset < experienceItems.length - 1) {
+        if (offset < maxOffset) {
             setOffset((prev) => prev + 1);
         }
     };
@@ -66,25 +85,26 @@ const Experience = forwardRef((_, ref: ForwardedRef<HTMLElement>) => {
                 <button disabled={offset == 0} onClick={handleLeftClick}>
                     <BiLeftArrowAlt />
                 </button>
-                <div className="experience__items-content" {...bind()}>
-                    {experienceItems.map((info, index) => (
-                        <div
-                            style={{
-                                transform: `translateX(${
-                                    (index - offset) * 100
-                                }%)`,
-                            }}
-                            className="experience__item-wrapper"
-                            key={info.id}
-                        >
-                            <ExperienceItem {...info} />
-                        </div>
-                    ))}
+                <div className="experience__items-slider">
+                    <div
+                        style={{
+                            transform: `translateX(-${offset * (100 / slidesPerView)}%)`,
+                        }}
+                        className="experience__items-content"
+                        {...bind()}
+                    >
+                        {experienceItems.map((info) => (
+                            <div
+                                className="experience__item-wrapper"
+                                key={info.id}
+
+                            >
+                                <ExperienceItem {...info} />
+                            </div>
+                        ))}
+                    </div>
                 </div>
-                <button
-                    disabled={offset == experienceItems.length - 1}
-                    onClick={handleRightClick}
-                >
+                <button disabled={offset >= maxOffset} onClick={handleRightClick}>
                     <BiRightArrowAlt />
                 </button>
             </div>
